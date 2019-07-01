@@ -8,3 +8,4 @@ Either way, I am open to positive or constructive criticism, please no trolls.
 Beta 2.0 - Goal: Add Secure Variables for safe credential storage.
            Goal: Fix redundant/unnessary Code
            Goal: Re-Create Script to have application integrate with Systemctl as a daemonized application.
+           Goal: Add PM2! :)
