@@ -16,3 +16,5 @@ Beta 2.0 - Goal: Add Secure Variables for safe credential storage. - Stored secu
            Goal: Add PM2! :) -- Goal Achieved locally.  Will Script into Ansible once completed. --GOALLLL achieved! :)
            Goal: HTTPS via TLS 1.2 - Managed to get HTTPS via self-signed cert.  
            Goal: Currently using HAProxy to load balance between two nodes using SSL Pass Thorugh.  Config file is posted.
+           Goal: Add to Ansible Script the deployment of an HAProxy server and configure nodes behind the load balancer.
+           Goal: Daemonize pm2 via systemctl in Ansible script
