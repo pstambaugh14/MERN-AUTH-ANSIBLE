@@ -100,12 +100,12 @@
 #    become_user: root
 #    become_method: sudo
   - name: Add firewall rules and SELinux configs 3/4
-    shell: setenforce 0
+    shell: setenforce permissive
     become: yes
     become_user: root
     become_method: sudo
-  - name: Configure SELinux to permanently disabled 4/4
-    shell: sed -i '7s/.*/SELINUX=disabled/' /etc/selinux/config
+  - name: Configure SELinux to permissive mode 4/4
+    shell: sed -i '7s/.*/SELINUX=permissive/' /etc/selinux/config
     become: yes
     become_user: root
     become_method: sudo
