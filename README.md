@@ -10,7 +10,7 @@ You can check out his original project with installation instructions at: https:
 You can also directly view or download his code at: https://github.com/rishipr/mern-auth . 
 
 
-Beta 2.0 - Goal: Add Secure Variables for safe credential storage.
+Beta 2.0 - Goal: Add Secure Variables for safe credential storage. - Stored securely during the session with --ask-sudo-pass params in start script for ansible.
            Goal: Fix redundant/unnessary Code - slowly but steadily
            Goal: Re-Create Script to have application integrate with Systemctl as a daemonized application. - probably not. now=pm2
            Goal: Add PM2! :) -- Goal Achieved locally.  Will Script into Ansible once completed. --GOALLLL achieved! :)
