@@ -1,3 +1,4 @@
-#run after pm2 ecosystem is established in the HLQ
+#!/bin/bash
 
-pm2 start npm --name npm -- run dev
+pm2 start "npm run server" --name backend
+pm2 start "npm run client" --name frontend
