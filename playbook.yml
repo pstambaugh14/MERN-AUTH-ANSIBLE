@@ -1,16 +1,56 @@
 ---
-- hosts: <your_ip>
-  remote_user: user
+- hosts: webservers
+  remote_user: <username>
   vars:
     project_path: /opt/test/mern-auth
 
   tasks:
+  - name: Upgrade all pakages with yum
+    yum:
+      name: '*'
+      state: latest
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Add NodeSource Repo to yum
+    shell: curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Update yum with newly added repos
+    yum:
+      name: '*'
+      state: latest
+  - name: Install node.js and npm
+    yum:
+      name: 'nodejs'
+      state: latest
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: ansible create directory
+    file:
+      path: /opt/test/
+      state: directory
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Change Permissions to /opt directory
+    shell: chmod 0754 -R /opt/test
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Change Ownership of /opt/test/ recursively.
+    shell: chown user:user -R /opt/test
+    become: yes
+    become_user: root
+    become_method: sudo
   - name: Clear Workspace
     shell: rm -rf /opt/test/mern-auth
   - name: Git Clone Source Code
     shell: git clone https://github.com/rishipr/mern-auth.git
     args:
-      creates: foobar
+      creates: mern-auth application root directory
       chdir: /opt/test
   - name: NPM INIT
     shell: npm init -y
@@ -20,13 +60,19 @@
   - name: NPM Install package.json Dependencies
     npm:
       path: /opt/test/mern-auth
-  - name: NPM Install & NPM Node.js Install
-    npm:
-      path: /opt/test/mern-auth/client
-  - name:
+  - name: Nodemon install via npm
     npm:
       name: nodemon
       path: /opt/test/mern-auth
+  - name: Replace package.json with necessary modified configs
+    shell: rm -f package.json
+  - name: Copy new package.json
+    copy:
+      src: /home/user/ansible/mern-auth/package.json
+      dest: /opt/test/mern-auth/package.json
+      owner: user
+      group: user
+      mode: '0644'
   - name: Remove old config files
     shell: rm -f /opt/test/mern-auth/config/keys.js
   - name: cd into config directory & Copy key.js into config directory
@@ -36,17 +82,63 @@
       owner: user
       group: user
       mode: '0644'
+  - name: Add firewall rules and SELinux configs 1/4
+    shell: firewall-cmd --permanent --add-port=5000/tcp
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Add firewall rules and SELinux configs 2/4
+    shell: firewall-cmd --permanent --add-port=3000/tcp
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Add firewall rules and SELinux configs 3/4
+    shell: setenforce 0
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Configure SELinux to permanently disabled 4/4
+    shell: sed -i '7s/.*/SELINUX=disabled/' /etc/selinux/config
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Reload firewalld / firewall-cmd to configure new settings
+    shell: firewall-cmd --reload
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Install and Configure pm2
+    npm:
+      name: pm2
+      global: yes
+      version: latest
+      path: /opt/test/mern-auth
+    become: yes
+    become_user: root
+    become_method: sudo
+#    shell: sudo npm install pm2@latest -g
   - name: Copy Start Script
     copy:
-      src: /home/user/ansible/mern-auth/services_start.sh
-      dest: /opt/test/mern-auth/services_start.sh
+      src: /home/user/ansible/mern-auth/pm2_start.sh
+      dest: /opt/test/mern-auth/pm2_start.sh
       owner: user
       group: user
       mode: '0644'
   - name: CHMOD Start Script
-    shell: chmod +x /opt/test/mern-auth/services_start.sh
-  - name: Start backend Services
-    command: nohup ./services_start.sh  0<&- &>/dev/null &
+    shell: chmod +x /opt/test/mern-auth/pm2_start.sh
+  - name: Finalization of Dependencies for backend server and frontend client
+    shell: npm install && npm run client-install
+    args:
+      chdir: /opt/test/mern-auth
+  - name: Audit Fix
+    shell: npm audit fix
+    become: yes
+    become_user: root
+    become_method: sudo
+    args:
+      chdir: /opt/test/mern-auth
+  - name: Start backend server and frontend client Services
+    command: nohup ./pm2_start.sh  0<&- &>/dev/null &
     async: 45
     poll: 0
     args:
