@@ -92,13 +92,6 @@
     become: yes
     become_user: root
     become_method: sudo
-#  - name: Add firewall rules and SELinux configs 3/4
-#    yum:
-#      name: setroubleshoot-server selinux-policy-devel
-#      state: latest
-#    become: yes
-#    become_user: root
-#    become_method: sudo
   - name: Add firewall rules and SELinux configs 3/4
     shell: setenforce permissive
     become: yes
@@ -174,3 +167,31 @@
     shell: nohup /opt/test/mern-auth/curl_frontend.sh 0<&- &>/dev/null &
     async: 45
     poll: 0
+  - name: Copy systemctl.sh
+    copy:
+      src: /home/user/ansible/mern-auth/systemctl.sh
+      dest: /opt/test/mern-auth/systemctl.sh
+      owner: user
+      group: user
+      mode: '0754'
+  - name: Execute systemctl.sh
+    shell: /opt/test/mern-auth/systemctl.sh
+  - name: Execute awk shell script to integrate with systemctl
+    shell: /opt/test/mern-auth/awkvar
+    become: yes
+    become_user: root
+    become_method: sudo
+  - name: Copy pm2.sh
+    copy:
+      src: /home/user/ansible/mern-auth/pm2.sh
+      dest: /opt/test/mern-auth/pm2.sh
+      owner: user
+      group: user
+      mode: '0754'
+  - name: Execute pm2.sh
+    shell: /opt/test/mern-auth/pm2.sh
+  - name: Systemctl start and enable of pm2
+    shell: systemctl start pm2-user.service && systemctl enable pm2-user.service
+    become: yes
+    become_user: root
+    become_method: sudo
