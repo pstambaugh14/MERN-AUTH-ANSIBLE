@@ -5,6 +5,10 @@
     project_path: /opt/test/mern-auth
 
   tasks:
+- name: Stop Running Instances of pm2
+  systemd:
+    state: stopped
+    name: pm2-user.service
   - name: Upgrade all pakages with yum
     yum:
       name: '*'
