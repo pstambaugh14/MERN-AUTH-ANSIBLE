@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "" > /home/user/.pm2/dump.pm2
-cd /opt/test/mern-auth/ && pm2 save
+echo "" > ~/.pm2/dump.pm2
+cd /opt/test/MERN-AUTH-ANSIBLE/ && pm2 save

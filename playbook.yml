@@ -1,6 +1,7 @@
 ---
 - hosts: webservers
   remote_user: user
+  gather_facts: true  
   vars_prompt:
 
     - name: mongoURI
@@ -15,12 +16,16 @@
       prompt: "What is your Mongodb password?"
 
   vars:
-    project_path: /opt/test/mern-auth
     username: "{{ username }}"
     password: "{{ password }}"
     mongoURI: "{{ mongoURI }}"
+    remote_install_path: /opt/test/MERN-AUTH-ANSIBLE 
+#    PWD:  
 
   tasks:
+  - name: Printing the local environment variable in Ansible
+    debug:
+      msg: "{{ lookup('env','PWD') }}"
   - name: Stop all pm2 apps via systemctl (if first run, comment this)
     systemd:
       name: pm2-user.service
@@ -69,42 +74,44 @@
     become_user: root
     become_method: sudo
   - name: Clear Workspace
-    shell: rm -rf /opt/test/mern-auth
+    shell: cd /opt/test/ && rm -rf MERN-AUTH-ANSIBLE
+  - name: Recreate Application Directory
+    shell: mkdir /opt/test/MERN-AUTH-ANSIBLE
   - name: Git Clone Source Code
-    shell: git clone https://github.com/rishipr/mern-auth.git
+    shell: git clone https://github.com/rishipr/mern-auth.git /opt/test/MERN-AUTH-ANSIBLE
     args:
-      creates: mern-auth application root directory
+      creates: MERN-AUTH-ANSIBLE application root directory
       chdir: /opt/test
   - name: NPM INIT
     shell: npm init -y
     args:
       creates: dir for app
-      chdir: /opt/test/mern-auth
+      chdir: /opt/test/MERN-AUTH-ANSIBLE
   - name: NPM Install package.json Dependencies
     npm:
-      path: /opt/test/mern-auth
+      path: /opt/test/MERN-AUTH-ANSIBLE
   - name: Nodemon install via npm
     npm:
       name: nodemon
-      path: /opt/test/mern-auth
+      path: /opt/test/MERN-AUTH-ANSIBLE
   - name: Replace package.json with necessary modified configs
     shell: rm -f package.json
   - name: Copy new package.json
     copy:
-      src: /home/user/ansible/mern-auth/package.json
-      dest: /opt/test/mern-auth/package.json
+      src: package.json
+      dest: /opt/test/MERN-AUTH-ANSIBLE/package.json
       owner: user
       group: user
       mode: '0644'
   - name: Parse template for keys.js URI
     lineinfile:
-      path: /opt/test/mern-auth/config/keys.js
+      path: /opt/test/MERN-AUTH-ANSIBLE/config/keys.js
       regexp: '^(.*)  mongoURI: "YOUR_MONGO_URI_HERE",(.*)$'
       line: '  mongoURI: "{{ mongoURI }}",'
   - name: Pass Credentials to keys.js
-    shell: sed -i "s/user/{{ username|quote }}/g" /opt/test/mern-auth/config/keys.js
+    shell: sed -i "s/user/{{ username|quote }}/g" /opt/test/MERN-AUTH-ANSIBLE/config/keys.js
   - name: Pass Creentials to keys.js
-    shell: sed -i "s/<password>/{{ password|quote }}/g" /opt/test/mern-auth/config/keys.js
+    shell: sed -i "s/<password>/{{ password|quote }}/g" /opt/test/MERN-AUTH-ANSIBLE/config/keys.js
   - name: Add firewall rules and SELinux configs 1/4
     shell: firewall-cmd --permanent --add-port=5000/tcp
     become: yes
@@ -135,60 +142,60 @@
       name: pm2
       global: yes
       version: latest
-      path: /opt/test/mern-auth
+      path: /opt/test/MERN-AUTH-ANSIBLE
     become: yes
     become_user: root
     become_method: sudo
 #    shell: sudo npm install pm2@latest -g
   - name: Copy Start Script
     copy:
-      src: /home/user/ansible/mern-auth/pm2_start.sh
-      dest: /opt/test/mern-auth/pm2_start.sh
+      src: pm2_start.sh
+      dest: /opt/test/MERN-AUTH-ANSIBLE/pm2_start.sh
       owner: user
       group: user
       mode: '0644'
   - name: CHMOD Start Script
-    shell: chmod +x /opt/test/mern-auth/pm2_start.sh
+    shell: chmod +x /opt/test/MERN-AUTH-ANSIBLE/pm2_start.sh
   - name: Finalization of Dependencies for backend server and frontend client
     shell: npm install && npm run client-install
     args:
-      chdir: /opt/test/mern-auth
+      chdir: /opt/test/MERN-AUTH-ANSIBLE
   - name: Audit Fix
     shell: npm audit fix
     become: yes
     become_user: root
     become_method: sudo
     args:
-      chdir: /opt/test/mern-auth
+      chdir: /opt/test/MERN-AUTH-ANSIBLE
   - name: Start backend server and frontend client Services
     command: nohup ./pm2_start.sh  0<&- &>/dev/null &
     async: 45
     poll: 0
     args:
-      chdir: /opt/test/mern-auth
+      chdir: /opt/test/MERN-AUTH-ANSIBLE
   - name: Copy systemctl.sh
     copy:
-      src: /home/user/ansible/mern-auth/systemctl.sh
-      dest: /opt/test/mern-auth/systemctl.sh
+      src: systemctl.sh
+      dest: /opt/test/MERN-AUTH-ANSIBLE/systemctl.sh
       owner: user
       group: user
       mode: '0754'
   - name: Execute systemctl.sh
-    shell: /opt/test/mern-auth/systemctl.sh
+    shell: /opt/test/MERN-AUTH-ANSIBLE/systemctl.sh
   - name: Execute awk shell script to integrate with systemctl
-    shell: /opt/test/mern-auth/awkvar
+    shell: /opt/test/MERN-AUTH-ANSIBLE/awkvar
     become: yes
     become_user: root
     become_method: sudo
   - name: Copy pm2.sh
     copy:
-      src: /home/user/ansible/mern-auth/pm2.sh
-      dest: /opt/test/mern-auth/pm2.sh
+      src: pm2.sh
+      dest: /opt/test/MERN-AUTH-ANSIBLE/pm2.sh
       owner: user
       group: user
       mode: '0754'
   - name: Execute pm2.sh
-    shell: /opt/test/mern-auth/pm2.sh
+    shell: /opt/test/MERN-AUTH-ANSIBLE/pm2.sh
   - name: Systemctl start and enable of pm2
     shell: systemctl start pm2-user.service && systemctl enable pm2-user.service
     become: yes

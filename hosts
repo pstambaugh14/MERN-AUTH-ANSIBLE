@@ -1,0 +1,28 @@
+[webservers]
+### alpha.example.org
+### beta.example.org
+10.0.2.6
+10.0.2.7
+
+[load_balancer]
+10.0.2.4
+
+#webservers:
+#  hosts:
+#    10.0.2.6
+#    10.0.2.7
+#all:
+#  hosts:
+#    LAN:
+#  children:
+#    webservers:
+#      hosts:
+#        10.0.2.5:
+#        10.0.2.15
+#        bar.example.com:
+#    dbservers:
+#      hosts:
+#        one.example.com:
+#        two.example.com:
+#        three.example.com:
+
