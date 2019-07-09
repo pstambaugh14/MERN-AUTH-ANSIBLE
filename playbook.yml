@@ -166,30 +166,6 @@
     poll: 0
     args:
       chdir: /opt/test/mern-auth
-  - name: Copy Backend API Checker
-    copy:
-      src: /home/user/ansible/mern-auth/curl.sh
-      dest: /opt/test/mern-auth/curl.sh
-      owner: user
-      group: user
-      mode: '0764'
-  - name: CHMOD API Check Script
-    shell: chmod +x /opt/test/mern-auth/curl.sh
-  - name: Run Backend API Checker
-    shell: nohup /opt/test/mern-auth/curl.sh 0<&- &>/dev/null &
-    async: 45
-    poll: 0
-  - name: Copy Frontend API Checker
-    copy:
-      src: /home/user/ansible/mern-auth/curl_frontend.sh
-      dest: /opt/test/mern-auth/curl_frontend.sh
-      owner: user
-      group: user
-      mode: '0764'
-  - name: Run FrontEnd Checker
-    shell: nohup /opt/test/mern-auth/curl_frontend.sh 0<&- &>/dev/null &
-    async: 45
-    poll: 0
   - name: Copy systemctl.sh
     copy:
       src: /home/user/ansible/mern-auth/systemctl.sh
