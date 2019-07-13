@@ -1,5 +1,3 @@
-<img src="icon.png" align="right" />
-
 # MERN-AUTH-ANSIBLE
 created by: Patrick Stambaugh
 Ansible Script for Deployment of MERN-based authentication application.
@@ -35,7 +33,7 @@ You can also directly view or download his code at: https://github.com/rishipr/m
 ## Notes
 
 - ***All created in CentOS 7 - unsure if this will work in other distros.***
-
+- *** This was created for educational purposes only.  I would not recommend using this in a production environment or anyone else's environment other than your own - and in a VM at that.  This script makes many changes to the Operating System and could affect other applications' functionality potentially - specifically, from the yum update.  This script is intended for a base operating system image - a clean slate.
 
 ## License
 
