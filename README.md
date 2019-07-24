@@ -1,11 +1,17 @@
 # MERN-AUTH-ANSIBLE
+
 created by: Patrick Stambaugh
 Ansible Script for Deployment of MERN-based authentication application.
 This is one of my first projects so please be kind.
 This isn't of much use other than that of practice for myself. 
 Either way, I am open to positive or constructive criticism, please no trolls.
 
+# About
+
+What is this exactly?  This is a MERN-stack based auth login application at its core.  I have added automation through Ansible and BASH scripting to be able to easily spin up this application on a fresh Centos 7 box.  I have also incorperated pm2 services for administration of the application and daemonized pm2 via systemctl/systemd.  In addition to this, I have also set HAProxy configs to use in a HA cluster with TLS/SSL if so desired.  
+
 # Credits:
+
 MERN Authentication app source code is courtesy of: Rishi Prasad (https://blog.bitsrc.io/@rishipr)
 You can check out his original project with installation instructions at: https://blog.bitsrc.io/build-a-login-auth-app-with-mern-stack-part-1-c405048e3669 .
 You can also directly view or download his code at: https://github.com/rishipr/mern-auth . 
@@ -39,6 +45,5 @@ You can also directly view or download his code at: https://github.com/rishipr/m
 
 Created by Patrick Stambaugh. 
 https://github.com/pstambaugh14/MERN-AUTH-ANSIBLE
-https://cloud.docker.com/repository/docker/pstambaugh14/mernauthansible_api
 
 
