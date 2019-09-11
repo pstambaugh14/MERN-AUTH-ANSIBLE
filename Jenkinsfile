@@ -1,3 +1,4 @@
+
 Jenkinsfile (Declarative Pipeline)
 pipeline {
     agent { docker { image 'node:10.16.0' } }
@@ -5,6 +6,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                
             }
         }
         stage('Test') {
